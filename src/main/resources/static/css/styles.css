@@ -1,0 +1,82 @@
+button.show-dialog {
+    font-size: 2em;
+    padding: 14px;
+    margin-top: 20px;
+    right: 50px;
+    border-radius: 18px;
+}
+
+.modal-body div.row {
+    position: relative
+}
+
+.modal-body div.row > div {
+    padding: 10px;
+    margin: 0;
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;
+}
+.modal-body > div.row > div:nth-child(1) {
+    width: 180px;
+    margin-left: 12px
+}
+.modal-body > div.row > div:nth-child(2) {
+    width: 710px;
+}
+
+form > section,
+.which-filters-apply-container > section {
+    display: inline-block;
+    padding: 5px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+form {
+    display: inline;
+}
+
+section.filter-type-container {
+    width: 185px;
+}
+
+section.compare-condition-container {
+    width: 160px;
+}
+section.input-container {
+    width: 215px;
+}
+
+section.DB-button-container {
+    width: 78px;
+    font-size: .7em;
+}
+section.remove-row-button-container {
+    width: 35px;
+    font-size: .7em;
+}
+
+.modal-body div.row > div.add-row-button-div {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-left: 0px;
+}
+section.add-row-button-container {
+    font-size: .7em;
+    margin-bottom: 5px;
+}
+
+.filter-type-container > select,
+.compare-condition-container > select,
+.input-container > input,
+.DB-button-container > button,
+.remove-row-button-container > button,
+.add-row-button-container > button {
+    display: inline-block;
+    width: 100%;
+    margin: 0;
+    height: 24px;
+}
+
