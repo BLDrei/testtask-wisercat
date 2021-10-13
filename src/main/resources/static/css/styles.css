@@ -6,26 +6,23 @@ button.show-dialog {
     border-radius: 18px;
 }
 
-.modal-body div.row {
+.modal-body .row {
     position: relative
 }
 
-.modal-body div.row > div {
+.modal-body .row > div {
     padding: 10px;
     margin: 0;
     box-sizing: border-box;
     position: relative;
     display: inline-block;
 }
-.modal-body > div.row > div:nth-child(1) {
+.modal-body > .row > div:nth-child(1) {
     width: 180px;
     margin-left: 12px
 }
-.modal-body > div.row > div:nth-child(2) {
-    width: 710px;
-}
 
-form > section,
+.single-control-row > section,
 .which-filters-apply-container > section {
     display: inline-block;
     padding: 5px;
@@ -45,7 +42,9 @@ section.compare-condition-container {
     width: 160px;
 }
 section.input-container {
-    width: 215px;
+    width: 230px;
+    display: inline-flex;
+    justify-content: space-between
 }
 
 section.DB-button-container {

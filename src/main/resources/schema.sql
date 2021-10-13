@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS article;
+
+CREATE TABLE article (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(250) NOT NULL,
+  date_of_issue DATE NOT NULL,
+  likes INT DEFAULT NULL,
+  full_text VARCHAR(250) NOT NULL
+);

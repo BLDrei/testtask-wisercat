@@ -1,24 +1,8 @@
 package eu.wisercat.testtask.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity
 public class Filter {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String filterType, compareCondition, input;
 
     public Filter() {
     }
@@ -28,8 +12,6 @@ public class Filter {
         this.compareCondition = compareCondition;
         this.input = input;
     }
-
-    private String filterType, compareCondition, input;
 
     public String getFilterType() {
         return filterType;
@@ -53,5 +35,14 @@ public class Filter {
 
     public void setInput(String input) {
         this.input = input;
+    }
+
+    @Override
+    public String toString() {
+        return "Filter{" +
+                "filterType='" + filterType + '\'' +
+                ", compareCondition='" + compareCondition + '\'' +
+                ", input='" + input + '\'' +
+                '}';
     }
 }
