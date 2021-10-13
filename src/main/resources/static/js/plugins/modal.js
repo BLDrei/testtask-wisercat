@@ -240,6 +240,7 @@ function updateDateStringInput(inputContainer) {
 
 function downloadFilters(modal) {
 
+
     let filename = (document.querySelector("#" + modal.id + " .filters-name").value || "filters") + '.json';
     const errorMsg = document.querySelector("#" + modal.id + " .error-message");
     let content = '';
