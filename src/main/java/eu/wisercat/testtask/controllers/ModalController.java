@@ -1,7 +1,7 @@
 package eu.wisercat.testtask.controllers;
 
-import eu.wisercat.testtask.models.Filter;
-import eu.wisercat.testtask.repo.FilterRepository;
+import eu.wisercat.testtask.models.Article;
+import eu.wisercat.testtask.repo.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,30 +13,51 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ModalController {
 
     @Autowired
-    private FilterRepository filterRepository;
+    private ArticleRepository articleRepository;
 
-    @GetMapping("/modal")
-    public String modalWindow(Model model) {
-        Iterable<Filter> filters = filterRepository.findAll();
+    @GetMapping("/articles")
+    public String showArticles(Model model) {
 
-        model.addAttribute("filters", filters);
+        Iterable<Article> articles = articleRepository.findAll();
+        model.addAttribute("articles", articles);
 
-        return "modal";
+        return "articles";
     }
 
-    @PostMapping("/modal/add")
-    public String saveFilterToDatabase(@RequestParam String filterType, @RequestParam String compareCondition, @RequestParam String input, Model model) {
-        Filter filter = new Filter(filterType, compareCondition, input);
+    @PostMapping("/filtered_articles")
+    public String showFilteredArticles(@RequestParam(value = "filtersArrayAsJSON", defaultValue = "[\n" +
+            "  {\n" +
+            "    \"filterType\":\"title\",\n" +
+            "    \"compareCondition\":\"contains\",\n" +
+            "    \"input\":\"Telegram\"\n" +
+            "  }\n" +
+            "]") String filtersArrayAsJSON,
+                   @RequestParam(value = "whichFiltersApply", defaultValue = "none") String whichFiltersApply, Model model) {
 
-        filterRepository.save(filter);
-        return "redirect:/modal";
-    }
 
-    @PostMapping("/modal/delete")
-    public String deleteFilterFromDatabase(@RequestParam Long id, Model model) {
-        Filter filter = filterRepository.findById(id).orElseThrow();
-        filterRepository.delete(filter);
-        return "redirect:/modal";
+        Iterable<Article> articles = articleRepository.findAll();
+
+//        System.out.println(filtersArrayAsJSON);
+//        if (filtersArrayAsJSON.equals("{}")) {
+//            model.addAttribute("articles", articles);
+//        } else {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            List<Filter> filters = objectMapper.readValue(filtersArrayAsJSON, new TypeReference<List<Filter>>(){});
+//            System.out.println(filters);
+//            ArrayList<Article> filteredArticles = (ArrayList<Article>) articles;
+//
+//            for (Filter filter : filters) {
+//                for (Article article : articles) {
+//
+//                }
+//            }
+
+        model.addAttribute("articles", articles);
+
+//        }
+
+//        System.out.println(model.getAttribute("articles"));
+        return "articles";
     }
 
 }
