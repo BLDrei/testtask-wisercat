@@ -8,7 +8,7 @@ function _createModal(primaryKey) {
                                                     <form action="/filtered_articles" method="POST">
                                                         <div class="modal-header">
                                                             <span class="modal-title">Modal title</span>
-                                                            <span class="modal-close" onclick="myModal.close();">&times;</span>
+                                                            <span class="modal-close" onclick="this.closest('.modal-container').close();">&times;</span>
                                                         </div>
 
                                                         <div class="modal-body container-fluid">
@@ -28,11 +28,11 @@ function _createModal(primaryKey) {
                                                                     <div class="control-rows">
 
                                                                     </div>
-                                                                    <input name="filtersArrayAsJSON" type="hidden" required>
+                                                                    <input class="filtersAsJSON" name="filtersAsJSON" type="hidden" value='[{"filterType":"likes","compareCondition":"lessThan","input":"34"}]' required>
                                                                 </div>
                                                                 <div class="add-row-button-div">
                                                                     <section class="add-row-button-container">
-                                                                        <button class="add-row" onclick="$.addFilterRow(this.closest('.modal-container'));">+</button>
+                                                                        <button class="add-row" onclick="addFilterRow(this.closest('.modal-container'));">+</button>
                                                                     </section>
                                                                 </div>
                                                             </div>
@@ -48,11 +48,11 @@ function _createModal(primaryKey) {
                                                                 </div>
                                                                 <div class="which-filters-apply-container">
                                                                     <section>
-                                                                        <input type="radio" id="all" name="whichFiltersApply" required>
+                                                                        <input type="radio" value="all" name="whichFiltersApply" required>
                                                                         <label for="all">alle Bedingungen</label>
                                                                     </section>
                                                                     <section>
-                                                                        <input type="radio" id="atLeastOne" name="whichFiltersApply" required>
+                                                                        <input type="radio" value="atLeastOne" name="whichFiltersApply" required>
                                                                         <label for="atLeastOne">mindestens eine Bedingung</label>
                                                                     </section>
                                                                 </div>
@@ -61,8 +61,8 @@ function _createModal(primaryKey) {
                                                                 <div></div>
                                                                 <div>
                                                                     <button type="button" onclick="downloadFilters(this.closest('.modal-container'));">Filters als JSON exportieren</button>
-                                                                    <button type="submit">Filter anwenden</button>
-                                                                    <button type="button" onclick="filter">Abbrechen</button>
+                                                                    <button type="submit" onclick="updateFiltersHiddenInput(this.closest('.modal-container'));">Filter anwenden</button>
+                                                                    <button type="button" onclick="this.closest('.modal-container').close();">Abbrechen</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -70,16 +70,44 @@ function _createModal(primaryKey) {
                                                 </div>
                                             </div>`);
     document.body.appendChild(modal);
-    $.addFilterRow(modal);
+
+    modal.errorMessage = getErrorMessageObject(modal);
+    modal.open = function() {
+         modal.classList.add('open');
+    },
+    modal.close = function() {
+        modal.classList.remove('open')
+    },
+    modal.destroy = function() {}
+
+
+    addFilterRow(modal);
     addEventListenerToModal(modal);
 
     return modal;
 }
 
+// Create error message object with getters and setters of its text content
+function getErrorMessageObject(modal) {
+    const $errMsg = document.querySelector("#" + modal.id + " .error-message");
+
+    return {
+            setMessage(textContent) {
+                $errMsg.textContent = textContent;
+            },
+            getMessage() {
+                return $errMsg.textContent;
+            },
+            clear() {
+                $errMsg.textContent = "";
+            }
+        }
+}
+
 function addEventListenerToModal(modal) {
     document.querySelector('#' + modal.id + ' .control-rows').addEventListener("change", function(e) {
 
-        document.querySelector('#' + modal.id + ' .error-message').textContent = '';
+        modal.errorMessage.clear();
 
         if (e.target.getAttribute('name') === 'filterType') {
              switchComparingConditions(e);
@@ -93,15 +121,16 @@ function addEventListenerToModal(modal) {
 }
 
 // Write and erase error messages
-function setErrorMessageText(modal, message) {
-    const errMsg = document.querySelector("#" + modal.id + ' .error-message');
-    errMsg.textContent = message;
-}
+//function setErrorMessageText(modal, message) {
+//    const errMsg = document.querySelector("#" + modal.id + ' .error-message');
+//    errMsg.textContent = message;
+//}
 
 // When user clicks on a "+" button, a new row appears
-$.addFilterRow = function(modal) {
+function addFilterRow(modal) {
 
-    setErrorMessageText(modal, "");
+    modal.errorMessage.clear();
+    console.log(modal)
 
     const newRow = document.createElement('div');
     newRow.classList.add('single-control-row');
@@ -129,25 +158,11 @@ $.addFilterRow = function(modal) {
     document.querySelector("#" + modal.id + " .control-rows").appendChild(newRow);
 }
 
-// Create a new modal window and implement open and close methods to it.
-$.modal = function(primaryKey) {
-    const $modal = _createModal(primaryKey);
-    return {
-        open() {
-            $modal.classList.add('open');
-        },
-        close() {
-            $modal.classList.remove('open')
-        },
-        destroy() {}
-    }
-};
-
 // When user changes the filter type, both comparing condition and input elements are changed according to the new filter type
 function switchComparingConditions(e) {
     let HTML = {};
-    let filterType = e.target.value;
-    switch (filterType) {
+    let newFilterType = e.target.value;
+    switch (newFilterType) {
         case "likes":
             HTML.compareConditions = `<select name="compareCondition" value="lessThan" required>
                                           <option value="lessThan">weniger als</option>
@@ -162,7 +177,6 @@ function switchComparingConditions(e) {
             HTML.compareConditions = `<select name="compareCondition" value="startsWith" required>
                                           <option value="startsWith" selected>beginnt mit</option>
                                           <option value="contains">enthält</option>
-                                          <option value="containsKeywords">enthält Stichwörter</option>
                                       </select>`;
 
             HTML.input = `<input name="input" type="text" required>`;
@@ -189,7 +203,7 @@ function switchComparingConditions(e) {
     currentRow.children[2].innerHTML = HTML.input;
 
 //    Auto-insert jsoned string value of default date
-    if (filterType === "dateOfIssue") {
+    if (newFilterType === "dateOfIssue") {
         updateDateStringInput(e.target.closest('.single-control-row').children[2]);
     }
 }
@@ -224,28 +238,71 @@ function generateDateInputHTML() {
 
 // This function takes the date input container, converts day, month and year values into a date and puts its jsoned value into the hidden input.
 function updateDateStringInput(inputContainer) {
-    const dateSelects = inputContainer.children;
+    const inputSelects = inputContainer.children;
     let dateObj = new Date();
-    dateObj.setUTCFullYear(dateSelects[2].value);
-    dateObj.setUTCMonth(findMonthIndex(dateSelects[1].value));
-    dateObj.setUTCDate(dateSelects[0].value);
+    dateObj.setUTCFullYear(inputSelects[2].value);
+    dateObj.setUTCMonth(findMonthIndex(inputSelects[1].value));
+    dateObj.setUTCDate(inputSelects[0].value);
     dateObj.setUTCHours(0, 0, 0, 0);
 
-    const inputElem = dateSelects[3];
+    const hiddenInput = inputSelects[3];
 
-    inputElem.value = dateObj.toJSON();
+    hiddenInput.value = dateObj.toJSON();
 
 }
 
 
+function updateFiltersHiddenInput(modal) {
+    let hiddenInput = document.querySelector("#" + modal.id + " input.filtersAsJSON");
+    let content = getFiltersAsJSON(modal);
+
+    hiddenInput.value = content;
+}
+
+// Finds file name
 function downloadFilters(modal) {
 
+    if(modal.errorMessage.getMessage() !== 'Alle Inputs müssen erfüllt werden!') {
+        let filename = (document.querySelector("#" + modal.id + " .filters-name").value || "filters") + '.json';
 
-    let filename = (document.querySelector("#" + modal.id + " .filters-name").value || "filters") + '.json';
-    const errorMsg = document.querySelector("#" + modal.id + " .error-message");
-    let content = '';
+        let content = getFiltersAsJSON(modal);
+        if (content) {
+            download(filename, content);
+        } else {
+            modal.errorMessage.setMessage('Alle Inputs müssen erfüllt werden!');
+        }
 
-    content = [];
+    }
+}
+
+function findMonthIndex(month) {
+  const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  return months.indexOf(month);
+}
+
+// This takes 2 params: file name and file content. Subsequently, it generates a file and starts the downloading process, asking the user where he'd like to store the file on his computer
+function download(filename, content) {
+    let element = document.createElement('a');
+    element.style.display = 'none';
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+
+    element.setAttribute('download', filename);
+    document.body.appendChild(element);
+
+    element.click();
+    document.body.removeChild(element);
+}
+
+// Returns the amount of filter rows of the particular modal window
+function howManyRowsShown(modal) {
+    const rowsArray = document.querySelector('#' + modal.id + ' .control-rows').children;
+    return rowsArray.length;
+}
+
+// Takes all the filter rows, generates an array of filter objects and returns its value as json string
+function getFiltersAsJSON(modal) {
+
+    let content = [];
     for (let row of document.querySelector("#" + modal.id + " .control-rows").children) {
       let rowObject = {};
       rowObject.filterType = row.children[0].firstElementChild.value;
@@ -264,40 +321,10 @@ function downloadFilters(modal) {
       }
 
       if(!rowObject.input) {
-        errorMsg.textContent = 'Alle Inputs müssen erfüllt werden!';
-        break;
+        return false;
       }
       content.push(rowObject);
     }
 
-    if(errorMsg.textContent !== 'Alle Inputs müssen erfüllt werden!') {
-        download(filename, JSON.stringify(content, true));
-    }
-}
-
-function findMonthIndex(month) {
-  const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-  return months.indexOf(month);
-}
-
-function download(filename, content) {
-    let element = document.createElement('a');
-    element.style.display = 'none';
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-
-    element.setAttribute('download', filename);
-    document.body.appendChild(element);
-
-    element.click();
-    document.body.removeChild(element);
-}
-
-//function changeButtonToSaveToDB(form) {
-//    form.children[3].firstElementChild.innerHTML = 'speichern';
-//}
-
-// Returns the number of rows
-function howManyRowsShown(modal) {
-    const rowsArray = document.querySelector('#' + modal.id + ' .control-rows').children;
-    return rowsArray.length;
+    return JSON.stringify(content);
 }

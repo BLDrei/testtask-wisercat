@@ -1,4 +1,4 @@
-const myModal = $.modal(1);
+const myModal = _createModal(1);
 
 // This function dynamically "sets" all values of options and inputs of a div, as if a user came in and selected these values manually
 // It is made to avoid undefined values when exporting to JSON
@@ -36,7 +36,7 @@ $.removeFilterRow = function(button) {
         button.closest('.single-control-row').remove();
     }
 
-    setErrorMessageText(modal, message);
+    modal.errorMessage.setMessage(message);
 }
 
 // Same as $.setValuesOfRow, but works for an array

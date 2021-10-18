@@ -16,11 +16,11 @@
 <div class="container">
     <h2>Alle Nachrichten</h2> <button class="show-dialog" onclick="myModal.open();">Filter</button>
     <div class="articles-container">
-        <article th:each="el : ${articles}">
-            <title th:text="${el.title}"/>
+        <div th:each="el : ${articles}">
+            <h4 th:text="${el.title}"/>
             <p th:text="${el.full_text}"/>
             <span>Likes: <span th:text="${el.likes}"/></span> <span>Posted: <span th:text="${el.date_of_issue}"/></span>
-        </article>
+        </div>
     </div>
 
 </div>

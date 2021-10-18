@@ -6,13 +6,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TesttaskApplication {
+public class TestTaskApplication {
 
 	@Autowired
 	private ArticleRepository articleRepository;
 
 	public static void main(String[] args) {
-		SpringApplication.run(TesttaskApplication.class, args);
+		SpringApplication.run(TestTaskApplication.class, args);
 	}
 
 }

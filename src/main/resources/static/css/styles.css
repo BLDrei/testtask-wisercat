@@ -79,3 +79,14 @@ section.add-row-button-container {
     height: 24px;
 }
 
+
+
+.articles-container {
+    margin-top: 30px;
+}
+.articles-container > div {
+    border: 2px solid black;
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
